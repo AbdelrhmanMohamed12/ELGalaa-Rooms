@@ -48,6 +48,7 @@
         .chalet-card.available {
             background-color: #28a745;
             color: white;
+            cursor: pointer;
         }
         .chalet-card.booked {
             background-color: #dc3545;
@@ -114,11 +115,11 @@
             text-align: right;
         }
         .dropdown-item {
-            color: black !important; /* لون النص الأسود عشان يبان */
+            color: black !important;
         }
         .dropdown-item:hover {
-            background-color: #ffc107; /* لون الخلفية لما تقف عليها */
-            color: white !important; /* لون النص أبيض لما تقف عليها */
+            background-color: #ffc107;
+            color: white !important;
         }
         #dashboard {
             display: none;
@@ -190,7 +191,7 @@
                 <h2>حالة الشاليهات</h2>
                 <div class="mb-3">
                     <label for="chaletFilter" class="form-label">تصفية الشاليهات</label>
-                    <select class="form-control" id="chaletFilter475" onchange="filterChalets()">
+                    <select class="form-control" id="chaletFilter" onchange="filterChalets()">
                         <option value="all">الكل</option>
                         <option value="available">فاضي</option>
                         <option value="booked">محجوز</option>
@@ -232,6 +233,7 @@
                         <input type="date" class="form-control" id="checkOut" required>
                     </div>
                     <button type="submit" class="btn btn-danger">إضافة الحجز</button>
+                    <button type="button" class="btn btn-secondary mt-2" onclick="showSection('home')">رجوع</button>
                 </form>
             </div>
             <div id="report" style="display: none;">
@@ -264,7 +266,7 @@
         </div>
         <footer>
             <p>جميع الحقوق محفوظة © 2025 - شاليهات نادي الجلاء</p>
-            <p>تم الإنشاء بواسطة IT Manager / Abdelrahman M. Gaber</p>
+            <p>تم الإنشاء بواسطة<br>IT Manager / Abdelrahman M. Gaber</p>
         </footer>
     </div>
 
@@ -279,7 +281,7 @@
 
         // قايمة الموظفين بالعربي مع باسورد افتراضي
         let users = [
-            { username: "admin", password: "12345" }, // تغيير "الأدمن" إلى "admin"
+            { username: "admin", password: "12345" },
             { username: "اسماء", password: "12345" },
             { username: "هاجر", password: "12345" },
             { username: "رانيا", password: "12345" },
@@ -313,7 +315,7 @@
                 document.getElementById('main-content').style.display = 'block';
                 document.getElementById('current-username').textContent = currentUser.username;
                 document.getElementById('dropdown-username').textContent = currentUser.username;
-                if (currentUser.username === "admin") { // تغيير "الأدمن" إلى "admin"
+                if (currentUser.username === "admin") {
                     document.getElementById('dashboard-nav').style.display = 'block';
                 }
                 loadChalets();
@@ -381,6 +383,9 @@
                     }</p>
                     ${chalet.status === 'booked' ? `<button class="btn btn-sm btn-light" onclick="cancelBooking(${chalet.id})">إلغاء</button>` : ''}
                 `;
+                if (chalet.status === 'available') {
+                    card.onclick = () => openBookingForm(chalet.id);
+                }
                 chaletContainer.appendChild(card);
             });
         }
@@ -389,7 +394,7 @@
             loadChalets();
         }
 
-        function loadChaletOptions() {
+        function loadChaletOptions(selectedChaletId = null) {
             const select = document.getElementById('chaletNumber');
             select.innerHTML = '';
             chalets.forEach(chalet => {
@@ -397,9 +402,17 @@
                     const option = document.createElement('option');
                     option.value = chalet.id;
                     option.text = `شاليه ${chalet.id}`;
+                    if (chalet.id === selectedChaletId) {
+                        option.selected = true;
+                    }
                     select.appendChild(option);
                 }
             });
+        }
+
+        function openBookingForm(chaletId) {
+            showSection('add');
+            loadChaletOptions(chaletId);
         }
 
         document.getElementById('bookingForm').addEventListener('submit', function(e) {
@@ -428,6 +441,7 @@
             updateDashboard();
             this.reset();
             alert('تم إضافة الحجز بنجاح!');
+            showSection('home');
         });
 
         function cancelBooking(chaletId) {
