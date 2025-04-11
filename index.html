@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شاليهات نادي الجلاء</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8f9fa;
+        }
+        header {
+            background-color: #dc3545;
+            color: white;
+            padding: 1.5em;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        header img {
+            width: 80px;
+            margin-left: 10px;
+        }
+        .navbar {
+            background-color: #ffc107;
+        }
+        .navbar a {
+            color: white;
+            font-weight: bold;
+        }
+        .container {
+            background-color: white;
+            padding: 2em;
+            margin-top: 2em;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .chalet-card {
+            border: 2px solid #dc3545;
+            padding: 1em;
+            margin: 0.5em;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .chalet-card.available {
+            background-color: #28a745;
+            color: white;
+        }
+        .chalet-card.booked {
+            background-color: #dc3545;
+            color: white;
+        }
+        .form-section {
+            background-color: #fff3cd;
+            padding: 1.5em;
+            border-radius: 8px;
+            margin-top: 2em;
+        }
+        footer {
+            background-color: #dc3545;
+            color: white;
+            text-align: center;
+            padding: 1em;
+            width: 100%;
+            margin-top: 2em;
+        }
+        .btn-report {
+            background-color: #ffc107;
+            color: #dc3545;
+            font-weight: bold;
+        }
+        #login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #login-form {
+            background: white;
+            padding: 2em;
+            border-radius: 10px;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        #login-header {
+            background-color: #dc3545;
+            color: white;
+            padding: 1em;
+            border-radius: 10px 10px 0 0;
+            margin: -2em -2em 1em -2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #login-header img {
+            width: 80px;
+            margin-left: 10px;
+        }
+        .user-icon {
+            width: 20px;
+            margin-right: 5px;
+        }
+        .dropdown-menu {
+            text-align: right;
+        }
+        .dropdown-item {
+            color: black !important; /* لون النص الأسود عشان يبان */
+        }
+        .dropdown-item:hover {
+            background-color: #ffc107; /* لون الخلفية لما تقف عليها */
+            color: white !important; /* لون النص أبيض لما تقف عليها */
+        }
+        #dashboard {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="login-screen">
+        <div id="login-form">
+            <div id="login-header">
+                <img src="https://www.afhotels.com.eg/img/logo.png" alt="لوجو نادي الجلاء">
+                <h2>شاليهات نادي الجلاء</h2>
+            </div>
+            <div class="mb-3">
+                <label for="username" class="form-label">اسم المستخدم</label>
+                <input type="text" class="form-control" id="username" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">كلمة المرور</label>
+                <input type="password" class="form-control" id="password" required>
+            </div>
+            <button class="btn btn-danger" onclick="login()">دخول</button>
+            <p id="error" style="color: red; display: none;">اسم المستخدم أو كلمة المرور غير صحيحة</p>
+        </div>
+    </div>
+
+    <div id="main-content">
+        <header>
+            <img src="https://www.afhotels.com.eg/img/logo.png" alt="لوجو نادي الجلاء">
+            <h1>شاليهات نادي الجلاء</h1>
+        </header>
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link" href="#home" onclick="showSection('home')">الرئيسية</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#add" onclick="showSection('add')">إضافة حجز</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#report" onclick="showSection('report')">تقرير الحجوزات</a></li>
+                        <li class="nav-item" id="dashboard-nav" style="display: none;"><a class="nav-link" href="#dashboard" onclick="showSection('dashboard')">لوحة التحكم</a></li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <img src="https://img.icons8.com/ios-filled/50/ffffff/user.png" alt="User" class="user-icon">
+                                <span id="current-username"></span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                <li><p class="dropdown-item-text">المستخدم: <span id="dropdown-username"></span></p></li>
+                                <li>
+                                    <div class="dropdown-item">
+                                        <label for="new-password" class="form-label">كلمة المرور الجديدة</label>
+                                        <input type="password" class="form-control" id="new-password" required>
+                                        <button class="btn btn-warning mt-2" onclick="changePassword()">تغيير</button>
+                                    </div>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" onclick="logout()">تسجيل الخروج</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            <div id="home">
+                <h2>حالة الشاليهات</h2>
+                <div class="mb-3">
+                    <label for="chaletFilter" class="form-label">تصفية الشاليهات</label>
+                    <select class="form-control" id="chaletFilter475" onchange="filterChalets()">
+                        <option value="all">الكل</option>
+                        <option value="available">فاضي</option>
+                        <option value="booked">محجوز</option>
+                    </select>
+                </div>
+                <div class="row" id="chalets">
+                </div>
+            </div>
+            <div class="form-section" id="add" style="display: none;">
+                <h2>إضافة حجز جديد</h2>
+                <form id="bookingForm">
+                    <div class="mb-3">
+                        <label for="guestName" class="form-label">اسم الجيست</label>
+                        <input type="text" class="form-control" id="guestName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="guestPhone" class="form-label">رقم الهاتف</label>
+                        <input type="tel" class="form-control" id="guestPhone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="adults" class="form-label">عدد البالغين</label>
+                        <input type="number" class="form-control" id="adults" min="1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="children" class="form-label">عدد الأطفال</label>
+                        <input type="number" class="form-control" id="children" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="chaletNumber" class="form-label">رقم الشاليه</label>
+                        <select class="form-control" id="chaletNumber" required>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="checkIn" class="form-label">تاريخ الوصول</label>
+                        <input type="date" class="form-control" id="checkIn" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="checkOut" class="form-label">تاريخ المغادرة</label>
+                        <input type="date" class="form-control" id="checkOut" required>
+                    </div>
+                    <button type="submit" class="btn btn-danger">إضافة الحجز</button>
+                </form>
+            </div>
+            <div id="report" style="display: none;">
+                <h2>تقرير الحجوزات</h2>
+                <button class="btn btn-report" onclick="generateReport()">تحميل تقرير الحجوزات (CSV)</button>
+            </div>
+            <div id="dashboard" class="container">
+                <h2>لوحة التحكم (للأدمن فقط)</h2>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card text-center p-3">
+                            <h5>إجمالي الشاليهات</h5>
+                            <p id="total-chalets">25</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center p-3">
+                            <h5>الشاليهات المحجوزة</h5>
+                            <p id="booked-chalets">0</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center p-3">
+                            <h5>الشاليهات الفاضية</h5>
+                            <p id="available-chalets">25</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <p>جميع الحقوق محفوظة © 2025 - شاليهات نادي الجلاء</p>
+            <p>تم الإنشاء بواسطة IT Manager / Abdelrahman M. Gaber</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // دالة لتحويل التاريخ لصيغة dd/mm/yyyy
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const [year, month, day] = dateString.split('-');
+            return `${day}/${month}/${year}`;
+        }
+
+        // قايمة الموظفين بالعربي مع باسورد افتراضي
+        let users = [
+            { username: "admin", password: "12345" }, // تغيير "الأدمن" إلى "admin"
+            { username: "اسماء", password: "12345" },
+            { username: "هاجر", password: "12345" },
+            { username: "رانيا", password: "12345" },
+            { username: "محمد", password: "12345" },
+            { username: "شيماء", password: "12345" },
+            { username: "حسام", password: "12345" }
+        ];
+
+        // تحميل الباسوردات المحفوظة من localStorage
+        function loadUsers() {
+            const savedUsers = localStorage.getItem('users');
+            if (savedUsers) {
+                users = JSON.parse(savedUsers);
+            }
+        }
+
+        // حفظ الباسوردات في localStorage
+        function saveUsers() {
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        let currentUser = null;
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const user = users.find(u => u.username === username && u.password === password);
+            if (user) {
+                currentUser = user;
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                document.getElementById('current-username').textContent = currentUser.username;
+                document.getElementById('dropdown-username').textContent = currentUser.username;
+                if (currentUser.username === "admin") { // تغيير "الأدمن" إلى "admin"
+                    document.getElementById('dashboard-nav').style.display = 'block';
+                }
+                loadChalets();
+                loadChaletOptions();
+                updateDashboard();
+            } else {
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+
+        function changePassword() {
+            const newPassword = document.getElementById('new-password').value;
+            if (newPassword && currentUser) {
+                currentUser.password = newPassword;
+                saveUsers();
+                document.getElementById('new-password').value = '';
+                alert('تم تغيير كلمة المرور بنجاح!');
+            } else {
+                alert('يرجى إدخال كلمة مرور جديدة');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('dashboard-nav').style.display = 'none';
+        }
+
+        // بيانات الشاليهات مع حقل جديد لاسم الموظف
+        let chalets = Array.from({length: 25}, (_, i) => ({
+            id: i + 1,
+            status: 'available',
+            guest: null,
+            phone: null,
+            adults: null,
+            children: null,
+            checkIn: null,
+            checkOut: null,
+            bookedBy: null
+        }));
+
+        function loadChalets() {
+            const chaletContainer = document.getElementById('chalets');
+            const filter = document.getElementById('chaletFilter')?.value || 'all';
+            chaletContainer.innerHTML = '';
+            let filteredChalets = chalets;
+            if (filter === 'available') {
+                filteredChalets = chalets.filter(chalet => chalet.status === 'available');
+            } else if (filter === 'booked') {
+                filteredChalets = chalets.filter(chalet => chalet.status === 'booked');
+            }
+            filteredChalets.forEach(chalet => {
+                const card = document.createElement('div');
+                card.className = `col-md-2 chalet-card ${chalet.status}`;
+                card.innerHTML = `
+                    <h5>شاليه ${chalet.id}</h5>
+                    <p>${
+                        chalet.status === 'available' 
+                        ? 'فاضي' 
+                        : `محجوز: ${chalet.guest}<br>البالغين: ${chalet.adults}<br>الأطفال: ${chalet.children}<br>الوصول: ${formatDate(chalet.checkIn)}<br>المغادرة: ${formatDate(chalet.checkOut)}<br>بواسطة: ${chalet.bookedBy}`
+                    }</p>
+                    ${chalet.status === 'booked' ? `<button class="btn btn-sm btn-light" onclick="cancelBooking(${chalet.id})">إلغاء</button>` : ''}
+                `;
+                chaletContainer.appendChild(card);
+            });
+        }
+
+        function filterChalets() {
+            loadChalets();
+        }
+
+        function loadChaletOptions() {
+            const select = document.getElementById('chaletNumber');
+            select.innerHTML = '';
+            chalets.forEach(chalet => {
+                if (chalet.status === 'available') {
+                    const option = document.createElement('option');
+                    option.value = chalet.id;
+                    option.text = `شاليه ${chalet.id}`;
+                    select.appendChild(option);
+                }
+            });
+        }
+
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const guestName = document.getElementById('guestName').value;
+            const guestPhone = document.getElementById('guestPhone').value;
+            const adults = document.getElementById('adults').value;
+            const children = document.getElementById('children').value;
+            const chaletNumber = document.getElementById('chaletNumber').value;
+            const checkIn = document.getElementById('checkIn').value;
+            const checkOut = document.getElementById('checkOut').value;
+
+            const chalet = chalets.find(c => c.id == chaletNumber);
+            chalet.status = 'booked';
+            chalet.guest = guestName;
+            chalet.phone = guestPhone;
+            chalet.adults = adults;
+            chalet.children = children;
+            chalet.checkIn = checkIn;
+            chalet.checkOut = checkOut;
+            chalet.bookedBy = currentUser.username;
+
+            saveChalets();
+            loadChalets();
+            loadChaletOptions();
+            updateDashboard();
+            this.reset();
+            alert('تم إضافة الحجز بنجاح!');
+        });
+
+        function cancelBooking(chaletId) {
+            const chalet = chalets.find(c => c.id == chaletId);
+            chalet.status = 'available';
+            chalet.guest = null;
+            chalet.phone = null;
+            chalet.adults = null;
+            chalet.children = null;
+            chalet.checkIn = null;
+            chalet.checkOut = null;
+            chalet.bookedBy = null;
+
+            saveChalets();
+            loadChalets();
+            loadChaletOptions();
+            updateDashboard();
+            alert('تم إلغاء الحجز بنجاح!');
+        }
+
+        function saveChalets() {
+            localStorage.setItem('chalets', JSON.stringify(chalets));
+        }
+
+        function loadSavedChalets() {
+            const saved = localStorage.getItem('chalets');
+            if (saved) {
+                chalets = JSON.parse(saved);
+            }
+        }
+
+        function generateReport() {
+            const BOM = '\uFEFF';
+            const headers = [
+                'رقم الشاليه',
+                'اسم الجيست',
+                'رقم الهاتف',
+                'عدد البالغين',
+                'عدد الأطفال',
+                'تاريخ الوصول',
+                'تاريخ المغادرة',
+                'الموظف'
+            ];
+            const rows = chalets
+                .filter(chalet => chalet.status === 'booked')
+                .map(chalet => [
+                    chalet.id,
+                    `"${chalet.guest}"`,
+                    chalet.phone,
+                    chalet.adults,
+                    chalet.children,
+                    `"${formatDate(chalet.checkIn)}"`,
+                    `"${formatDate(chalet.checkOut)}"`,
+                    `"${chalet.bookedBy}"`
+                ]);
+            const csvContent = BOM + [
+                headers.join(','),
+                ...rows.map(row => row.join(','))
+            ].join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'تقرير_الحجوزات.csv';
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        function updateDashboard() {
+            const totalChalets = chalets.length;
+            const bookedChalets = chalets.filter(c => c.status === 'booked').length;
+            const availableChalets = totalChalets - bookedChalets;
+            document.getElementById('total-chalets').textContent = totalChalets;
+            document.getElementById('booked-chalets').textContent = bookedChalets;
+            document.getElementById('available-chalets').textContent = availableChalets;
+        }
+
+        function showSection(section) {
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('add').style.display = 'none';
+            document.getElementById('report').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById(section).style.display = 'block';
+        }
+
+        loadUsers();
+        loadSavedChalets();
+        loadChalets();
+        loadChaletOptions();
+    </script>
+</body>
+</html>
