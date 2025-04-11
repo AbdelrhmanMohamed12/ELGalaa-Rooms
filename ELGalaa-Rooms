@@ -12,7 +12,7 @@
             background-color: #f8f9fa;
         }
         header {
-            background-color: #dc3545; /* أحمر */
+            background-color: #dc3545;
             color: white;
             padding: 1.5em;
             text-align: center;
@@ -25,7 +25,7 @@
             margin-left: 10px;
         }
         .navbar {
-            background-color: #ffc107; /* أصفر */
+            background-color: #ffc107;
         }
         .navbar a {
             color: white;
@@ -46,15 +46,15 @@
             text-align: center;
         }
         .chalet-card.available {
-            background-color: #28a745; /* أخضر للفاضي */
+            background-color: #28a745;
             color: white;
         }
         .chalet-card.booked {
-            background-color: #dc3545; /* أحمر للمحجوز */
+            background-color: #dc3545;
             color: white;
         }
         .form-section {
-            background-color: #fff3cd; /* خلفية صفرا فاتحة */
+            background-color: #fff3cd;
             padding: 1.5em;
             border-radius: 8px;
             margin-top: 2em;
@@ -104,7 +104,6 @@
             </select>
         </div>
         <div class="row" id="chalets">
-            <!-- الشاليهات هتتضاف هنا ديناميكيًا -->
         </div>
         <div class="form-section" id="add">
             <h2>إضافة حجز جديد</h2>
@@ -128,7 +127,6 @@
                 <div class="mb-3">
                     <label for="chaletNumber" class="form-label">رقم الشاليه</label>
                     <select class="form-control" id="chaletNumber" required>
-                        <!-- الأرقام هتتضاف ديناميكيًا -->
                     </select>
                 </div>
                 <div class="mb-3">
@@ -153,7 +151,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // بيانات الشاليهات
         let chalets = Array.from({length: 25}, (_, i) => ({
             id: i + 1,
             status: 'available',
@@ -165,7 +162,6 @@
             checkOut: null
         }));
 
-        // تحميل الشاليهات
         function loadChalets() {
             const chaletContainer = document.getElementById('chalets');
             const filter = document.getElementById('chaletFilter')?.value || 'all';
@@ -192,12 +188,10 @@
             });
         }
 
-        // دالة التصفية
         function filterChalets() {
             loadChalets();
         }
 
-        // تحميل أرقام الشاليهات في الفورم
         function loadChaletOptions() {
             const select = document.getElementById('chaletNumber');
             select.innerHTML = '';
@@ -211,7 +205,6 @@
             });
         }
 
-        // إضافة حجز
         document.getElementById('bookingForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const guestName = document.getElementById('guestName').value;
@@ -238,7 +231,6 @@
             alert('تم إضافة الحجز بنجاح!');
         });
 
-        // إلغاء حجز
         function cancelBooking(chaletId) {
             const chalet = chalets.find(c => c.id == chaletId);
             chalet.status = 'available';
@@ -255,12 +247,10 @@
             alert('تم إلغاء الحجز بنجاح!');
         }
 
-        // حفظ البيانات في LocalStorage
         function saveChalets() {
             localStorage.setItem('chalets', JSON.stringify(chalets));
         }
 
-        // تحميل البيانات من LocalStorage
         function loadSavedChalets() {
             const saved = localStorage.getItem('chalets');
             if (saved) {
@@ -268,7 +258,6 @@
             }
         }
 
-        // إنشاء تقرير CSV
         function generateReport() {
             const BOM = '\uFEFF';
             const headers = [
@@ -303,7 +292,6 @@
             URL.revokeObjectURL(link.href);
         }
 
-        // تحميل البيانات لأول مرة
         loadSavedChalets();
         loadChalets();
         loadChaletOptions();
